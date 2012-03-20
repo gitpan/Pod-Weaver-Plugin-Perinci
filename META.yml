@@ -1,0 +1,24 @@
+---
+abstract: 'Insert POD from Rinci metadata'
+author:
+  - 'Steven Haryanto <stevenharyanto@gmail.com>'
+build_requires:
+  Module::Build: 0.3601
+configure_requires:
+  Module::Build: 0.3601
+dynamic_config: 0
+generated_by: 'Dist::Zilla version 4.300002, CPAN::Meta::Converter version 2.112150'
+license: perl
+meta-spec:
+  url: http://module-build.sourceforge.net/META-spec-v1.4.html
+  version: 1.4
+name: Pod-Weaver-Plugin-Perinci
+requires:
+  Log::Any: 0
+  Perinci::To::POD: 0
+  Pod::Weaver: 0
+  perl: 5.010000
+resources:
+  homepage: http://search.cpan.org/dist/Pod-Weaver-Plugin-Perinci/
+  repository: http://github.com/sharyanto/perl-Pod-Weaver-Plugin-Perinci
+version: 0.08
