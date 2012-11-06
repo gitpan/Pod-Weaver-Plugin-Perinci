@@ -3,6 +3,7 @@ Changes
 LICENSE
 MANIFEST
 MANIFEST.SKIP
+META.json
 META.yml
 README
 dist.ini
@@ -10,3 +11,4 @@ lib/Pod/Weaver/Plugin/Perinci.pm
 t/00-compile.t
 t/release-pod-coverage.t
 t/release-pod-syntax.t
+t/release-rinci.t

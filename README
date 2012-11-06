@@ -2,7 +2,7 @@ NAME
     Pod::Weaver::Plugin::Perinci - Insert POD from Rinci metadata
 
 VERSION
-    version 0.08
+    version 0.09
 
 SYNOPSIS
     In your "weaver.ini":

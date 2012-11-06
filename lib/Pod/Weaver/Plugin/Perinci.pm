@@ -10,7 +10,7 @@ use Perinci::To::POD;
 use Pod::Elemental;
 use Pod::Elemental::Element::Nested;
 
-our $VERSION = '0.08'; # VERSION
+our $VERSION = '0.09'; # VERSION
 
 # regex
 has exclude_modules => (
@@ -60,7 +60,10 @@ sub weave_section {
         }
     }
 
-    unshift @INC, "lib" unless 'lib' =~ @INC;
+    local @INC = ("lib", @INC);
+
+    $self->log(["generating POD for %s ...", $filename]);
+    $log->infof("generating POD for %s ...", $filename);
 
     # generate the POD and insert it to FUNCTIONS section
     my $url = $package; $url =~ s!::!/!g; $url .= "/";
@@ -80,8 +83,8 @@ sub weave_section {
         push @{ $input->{pod_document}->children }, $fpara;
     }
     if ($found) {
-        $self->log(["adding POD sections from Rinci metadata for %s", $filename]);
-        $log->infof("adding POD sections from Rinci metadata for %s", $filename);
+        $self->log(["added POD sections from Rinci metadata for %s", $filename]);
+        $log->infof("added POD sections from Rinci metadata for %s", $filename);
     }
     $log->trace("<- ".__PACKAGE__."::weave_section()");
 }
@@ -99,7 +102,7 @@ Pod::Weaver::Plugin::Perinci - Insert POD from Rinci metadata
 
 =head1 VERSION
 
-version 0.08
+version 0.09
 
 =head1 SYNOPSIS
 
