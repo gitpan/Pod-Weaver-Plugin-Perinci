@@ -17,16 +17,15 @@ my %module_build_args = (
     "Steven Haryanto <stevenharyanto\@gmail.com>"
   ],
   "dist_name" => "Pod-Weaver-Plugin-Perinci",
-  "dist_version" => "0.09",
+  "dist_version" => "0.10",
   "license" => "perl",
   "module_name" => "Pod::Weaver::Plugin::Perinci",
   "recommends" => {},
   "recursive_test_files" => 1,
   "requires" => {
-    "Log::Any" => 0,
     "Perinci::To::POD" => 0,
     "Pod::Weaver" => 0,
-    "perl" => "5.010000"
+    "perl" => "5.010001"
   },
   "script_files" => []
 );

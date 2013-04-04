@@ -1,16 +1,15 @@
 package Pod::Weaver::Plugin::Perinci;
 
-use 5.010;
+use 5.010001;
 use Moose;
 with 'Pod::Weaver::Role::Section';
 
-use Log::Any '$log';
-
+use List::Util qw(first);
 use Perinci::To::POD;
 use Pod::Elemental;
 use Pod::Elemental::Element::Nested;
 
-our $VERSION = '0.09'; # VERSION
+our $VERSION = '0.10'; # VERSION
 
 # regex
 has exclude_modules => (
@@ -23,7 +22,6 @@ has exclude_files => (
 );
 
 sub weave_section {
-    $log->trace("-> ".__PACKAGE__."::weave_section()");
     my ($self, $document, $input) = @_;
 
     my $filename = $input->{filename} || 'file';
@@ -34,8 +32,7 @@ sub weave_section {
         $package = $1;
         $package =~ s!/!::!g;
     } else {
-        #$self->log(["skipped file %s (not a Perl module)", $filename]);
-        $log->debugf("skipped file %s (not a Perl module)", $filename);
+        $self->log_debug(["skipped file %s (not a Perl module)", $filename]);
         return;
     }
 
@@ -44,8 +41,7 @@ sub weave_section {
         eval { $re = qr/$re/ };
         $@ and die "Invalid regex in exclude_files: $re";
         if ($filename =~ $re) {
-            $self->log (["skipped file %s (matched exclude_files)", $filename]);
-            $log->debugf("skipped file %s (matched exclude_files)", $filename);
+            $self->log_debug(["skipped file %s (matched exclude_files)", $filename]);
             return;
         }
     }
@@ -55,15 +51,13 @@ sub weave_section {
         $@ and die "Invalid regex in exclude_modules: $re";
         if ($package =~ $re) {
             $self->log (["skipped package %s (matched exclude_modules)", $package]);
-            $log->debugf("skipped package %s (matched exclude_modules)", $package);
             return;
         }
     }
 
     local @INC = ("lib", @INC);
 
-    $self->log(["generating POD for %s ...", $filename]);
-    $log->infof("generating POD for %s ...", $filename);
+    $self->log_debug(["generating POD for %s ...", $filename]);
 
     # generate the POD and insert it to FUNCTIONS section
     my $url = $package; $url =~ s!::!/!g; $url .= "/";
@@ -75,18 +69,26 @@ sub weave_section {
     my $found;
     while ($pod_text =~ /^=head1 ([^\n]+)\n(.+?)(?=^=head1|\z)/msg) {
         $found++;
-        my $fpara = Pod::Elemental::Element::Nested->new({
+        my ($sectname, $sectcontent) = ($1, $2);
+        my $elem = Pod::Elemental::Element::Nested->new({
             command  => 'head1',
-            content  => $1,
-            children => Pod::Elemental->read_string($2)->children,
+            content  => $sectname,
+            children => Pod::Elemental->read_string($sectcontent)->children,
         });
-        push @{ $input->{pod_document}->children }, $fpara;
+        my $sect = first {
+            $_->can('command') && $_->command eq 'head1' &&
+                uc($_->{content}) eq uc($sectname) }
+            @{ $document->children }, @{ $input->{pod_document}->children };
+        # if existing section exists, append it
+        if ($sect) {
+            push @{ $sect->children }, @{ $elem->children };
+        } else {
+            push @{ $document->children }, $elem;
+        }
     }
     if ($found) {
         $self->log(["added POD sections from Rinci metadata for %s", $filename]);
-        $log->infof("added POD sections from Rinci metadata for %s", $filename);
     }
-    $log->trace("<- ".__PACKAGE__."::weave_section()");
 }
 
 1;
@@ -102,7 +104,7 @@ Pod::Weaver::Plugin::Perinci - Insert POD from Rinci metadata
 
 =head1 VERSION
 
-version 0.09
+version 0.10
 
 =head1 SYNOPSIS
 
@@ -136,7 +138,7 @@ Steven Haryanto <stevenharyanto@gmail.com>
 
 =head1 COPYRIGHT AND LICENSE
 
-This software is copyright (c) 2012 by Steven Haryanto.
+This software is copyright (c) 2013 by Steven Haryanto.
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.
