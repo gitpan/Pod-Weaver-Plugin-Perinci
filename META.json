@@ -4,7 +4,7 @@
       "Steven Haryanto <stevenharyanto@gmail.com>"
    ],
    "dynamic_config" : 0,
-   "generated_by" : "Dist::Zilla version 4.300028, CPAN::Meta::Converter version 2.120921",
+   "generated_by" : "Dist::Zilla version 4.300035, CPAN::Meta::Converter version 2.131560",
    "license" : [
       "perl_5"
    ],
@@ -34,7 +34,7 @@
       },
       "runtime" : {
          "requires" : {
-            "Perinci::To::POD" : "0",
+            "Perinci::To::POD" : "0.30",
             "Pod::Weaver" : "0",
             "perl" : "5.010001"
          }
@@ -47,6 +47,6 @@
          "url" : "http://github.com/sharyanto/perl-Pod-Weaver-Plugin-Perinci"
       }
    },
-   "version" : "0.10"
+   "version" : "0.11"
 }
 
