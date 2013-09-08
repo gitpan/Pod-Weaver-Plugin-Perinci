@@ -17,7 +17,7 @@ my %module_build_args = (
     "Steven Haryanto <stevenharyanto\@gmail.com>"
   ],
   "dist_name" => "Pod-Weaver-Plugin-Perinci",
-  "dist_version" => "0.11",
+  "dist_version" => "0.12",
   "license" => "perl",
   "module_name" => "Pod::Weaver::Plugin::Perinci",
   "recommends" => {},
@@ -28,7 +28,11 @@ my %module_build_args = (
     "perl" => "5.010001"
   },
   "script_files" => [],
-  "test_requires" => {}
+  "test_requires" => {
+    "Capture::Tiny" => 0,
+    "Test::More" => "0.88",
+    "blib" => 0
+  }
 );
 
 
