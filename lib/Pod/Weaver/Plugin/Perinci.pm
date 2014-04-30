@@ -10,9 +10,13 @@ use Perinci::To::POD;
 use Pod::Elemental;
 use Pod::Elemental::Element::Nested;
 
-our $VERSION = '0.14'; # VERSION
+our $VERSION = '0.15'; # VERSION
 
-our $pa = Perinci::Access::Perl->new;
+our $pa = Perinci::Access::Perl->new(
+    # we want to document the function's original properties (i.e. result_naked
+    # and args_as)
+    normalize_metadata => 0,
+);
 
 # regex
 has exclude_modules => (
@@ -69,22 +73,9 @@ sub weave_section {
     $res = $pa->request(meta => $url);
     die "Can't meta $url: $res->[0] - $res->[1]" unless $res->[0] == 200;
     my $meta = $res->[2];
-    my $ometa = $res->[3]{orig_meta} // {};
-    # document original metadata's args_as & result_naked, not the wrapped one.
-    for (qw/args_as result_naked/) {
-        $meta->{$_} = $ometa->{$_} if defined $ometa->{$_};
-    }
     $res = $pa->request(child_metas => $url);
     die "Can't child_metas $url: $res->[0] - $res->[1]" unless $res->[0] == 200;
     my $cmetas = $res->[2];
-    my $ometas = $res->[3]{orig_metas} // {};
-    # document original metadata's args_as & result_naked, not the wrapped one.
-    for my $uri (keys %$cmetas) {
-        for (qw/args_as result_naked/) {
-            $cmetas->{$uri}{$_} = $ometas->{$uri}{$_}
-                if defined $ometas->{$uri}{$_};
-        }
-    }
 
     my $doc = Perinci::To::POD->new(
         name=>$package, meta=>$meta, child_metas=>$cmetas);
@@ -138,7 +129,7 @@ __END__
 
 =pod
 
-=encoding utf-8
+=encoding UTF-8
 
 =head1 NAME
 
@@ -146,7 +137,7 @@ Pod::Weaver::Plugin::Perinci - Insert POD from Rinci metadata
 
 =head1 VERSION
 
-version 0.14
+This document describes version 0.15 of Pod::Weaver::Plugin::Perinci (from Perl distribution Pod-Weaver-Plugin-Perinci), released on 2014-04-30.
 
 =head1 SYNOPSIS
 
@@ -180,8 +171,7 @@ Source repository is at L<https://github.com/sharyanto/perl-Pod-Weaver-Plugin-Pe
 
 =head1 BUGS
 
-Please report any bugs or feature requests on the bugtracker website
-http://rt.cpan.org/Public/Dist/Display.html?Name=Pod-Weaver-Plugin-Perinci
+Please report any bugs or feature requests on the bugtracker website L<https://rt.cpan.org/Public/Dist/Display.html?Name=Pod-Weaver-Plugin-Perinci>
 
 When submitting a bug or request, please include a test-file or a
 patch to an existing test-file that illustrates the bug or desired
@@ -193,7 +183,7 @@ Steven Haryanto <stevenharyanto@gmail.com>
 
 =head1 COPYRIGHT AND LICENSE
 
-This software is copyright (c) 2013 by Steven Haryanto.
+This software is copyright (c) 2014 by Steven Haryanto.
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.
